@@ -4,4 +4,4 @@ RUN pip install requests
 
 ADD . .
 
-ENTRYPOINT [ "python", "tesla.py" ]
+CMD [ "python", "tesla.py" ]

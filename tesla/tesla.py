@@ -18,7 +18,7 @@ def diff(notify_secret):
     if r == -1:
       print('[{}] 没有检测到续航 668 的车型'.format(now))
     else:
-      msg = '[{}] 检测到了续航 668 的车型！！！！！！！！！！！！！！赶紧的!!!!!'.format(now)
+      msg = '[{}] 检测到了续航 668 的车型！！！！！！！赶紧的!!!!!'.format(now)
       notify(msg, notify_secret)
       print(msg)
 
@@ -32,11 +32,14 @@ def notify(text, notify_secret):
 
 
 if __name__ == "__main__":
-  check_interval = os.getenv('CHECK_INTERVAL') or 60
+  check_interval = int(os.getenv('CHECK_INTERVAL')) or 60
   notify_secret = os.getenv('NOTIFY_SECRET')
   if not notify_secret:
     print('Error! 请设置 Server 酱通知的密钥')
     exit(1)
+
+  print('本次检测开始，检测间隔：{} , Server 酱密钥：{} '.format(check_interval, notify_secret))
+
   i = 0
   while True:
     try:
