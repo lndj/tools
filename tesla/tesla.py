@@ -34,6 +34,7 @@ def notify(text, notify_secret):
 if __name__ == "__main__":
   check_interval = int(os.getenv('CHECK_INTERVAL')) or 60
   notify_secret = os.getenv('NOTIFY_SECRET')
+  health_check_interval = os.getenv('HEALTH_CHECK_INTERVAL') or 50
   if not notify_secret:
     print('Error! 请设置 Server 酱通知的密钥')
     exit(1)
@@ -45,8 +46,8 @@ if __name__ == "__main__":
     try:
         diff(notify_secret)
         time.sleep(check_interval)
-        if i > 0 and i % 50 == 0:
-          notify('距离上次通知你，已经又跑了 50 次了，就是告诉你我还活着', notify_secret)
+        if i > 0 and i % int(health_check_interval) == 0:
+          notify('【第{}次检测】距离上次通知你，已经又跑了 {} 次了，没啥事，就是告诉你我还活着'.format(i, health_check_interval), notify_secret)
         i += 1
     except Exception as e:
       print(e)
