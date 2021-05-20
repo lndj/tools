@@ -1,0 +1,22 @@
+version: '3.3'
+services:
+  index-page:
+    image: hub.didiyun.com/lndj/lzjtuhand-index:latest
+    networks:
+     - proxynet
+    deploy:
+      labels:
+        traefik.http.routers.lzjtuhand-index.rule: Host(`www.lzjtuhand.com`) || Host(`lzjtuhand.com`)
+        traefik.http.routers.lzjtuhand-index.tls.certresolver: letsencryptresolver
+        traefik.http.middlewares.redirect.redirectscheme.scheme: https
+        traefik.http.routers.lzjtuhand-index.tls: 'true'
+        traefik.http.routers.lzjtuhand-index.entrypoints: websecure
+        traefik.http.routers.lzjtuhand-index-insecure.middlewares: redirect
+        traefik.http.routers.lzjtuhand-index.tls.domains[0].main: www.lzjtuhand.com
+        traefik.http.routers.lzjtuhand-index.tls.domains[1].main: lzjtuhand.com
+        traefik.http.services.lzjtuhand-index.loadbalancer.server.port: '80'
+        traefik.http.routers.lzjtuhand-index.entrypoints: websecure
+        traefik.enable: 'true'
+networks:
+  proxynet:
+    external: true
