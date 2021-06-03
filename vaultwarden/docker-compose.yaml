@@ -1,0 +1,38 @@
+version: '3.3'
+services:
+  bitwarden:
+    image: vaultwarden/server:latest
+    ports:
+      - 8002:80
+      - 8003:3012
+    networks:
+     - proxynet
+    volumes:
+     - vaultwarden-data:/data/
+    deploy:
+      labels:
+        traefik.enable: 'true'
+        traefik.http.middlewares.redirect.redirectscheme.scheme: https
+
+        traefik.http.routers.bitwarden-ui.tls: 'true'
+        traefik.http.routers.bitwarden-ui.tls.certresolver: letsencryptresolver
+        traefik.http.routers.bitwarden-ui.tls.domains[0].main: bitwarden.lzjtuhand.com
+        traefik.http.routers.bitwarden-ui.entrypoints: websecure
+        traefik.http.routers.bitwarden-ui-insecure.middlewares: redirect
+        traefik.http.routers.bitwarden-ui.rule: Host(`bitwarden.lzjtuhand.com`)
+        traefik.http.routers.bitwarden-ui.service: bitwarden-ui
+        traefik.http.services.bitwarden-ui.loadbalancer.server.port: '80'
+        
+        traefik.http.routers.bitwarden-websocket.entrypoints: websecure
+        traefik.http.routers.bitwarden-websocket.tls: 'true'
+        traefik.http.routers.bitwarden-websocket.rule: Host(`bitwarden.lzjtuhand.com`) && Path(`/notifications/hub`)
+        traefik.http.routers.bitwarden-websocket.service: bitwarden-websocket
+        traefik.http.services.bitwarden-websocket.loadbalancer.server.port: '3012'
+
+networks:
+  proxynet:
+    external: true
+volumes:
+  vaultwarden-data:
+    driver: local
+
